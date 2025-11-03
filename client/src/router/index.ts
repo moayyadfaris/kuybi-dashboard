@@ -1,0 +1,104 @@
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
+import Login from '../pages/Login.vue'
+import Dashboard from '../pages/Dashboard.vue'
+import Stories from '../pages/Stories.vue'
+import CreateStory from '../pages/CreateStory.vue'
+import EditStory from '../pages/EditStory.vue'
+import Categories from '../pages/Categories.vue'
+import Tags from '../pages/Tags.vue'
+import Settings from '../pages/Settings.vue'
+import Profile from '../pages/Profile.vue'
+import Media from '../pages/Media.vue'
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/',
+    name: 'Dashboard',
+    component: Dashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/stories',
+    name: 'Stories',
+    component: Stories,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/stories/create',
+    name: 'CreateStory',
+    component: CreateStory,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/stories/:id/edit',
+    name: 'EditStory',
+    component: EditStory,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/categories',
+    name: 'Categories',
+    component: Categories,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/tags',
+    name: 'Tags',
+    component: Tags,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/media',
+    name: 'Media',
+    component: Media,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
+  },
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+// Navigation guard to check authentication
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+
+  // Check auth and fetch user if token exists but user is not loaded
+  await authStore.checkAuth()
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    // Redirect to login if trying to access protected route
+    next('/login')
+  } else if (to.path === '/login' && authStore.isAuthenticated) {
+    // Redirect to dashboard if already logged in
+    next('/')
+  } else {
+    next()
+  }
+})
+
+export default router
