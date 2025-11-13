@@ -10,6 +10,8 @@ import Tags from '../pages/Tags.vue'
 import Settings from '../pages/Settings.vue'
 import Profile from '../pages/Profile.vue'
 import Media from '../pages/Media.vue'
+import Users from '../pages/Users.vue'
+import Sessions from '../pages/Sessions.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -70,6 +72,18 @@ const routes: RouteRecordRaw[] = [
     path: '/media',
     name: 'Media',
     component: Media,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/sessions',
+    name: 'Sessions',
+    component: Sessions,
     meta: { requiresAuth: true },
   },
   {

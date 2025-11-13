@@ -251,6 +251,7 @@
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Enter new password"
             />
+            <PasswordStrengthIndicator :password="passwordForm.newPassword" />
           </div>
 
           <!-- Confirm Password -->
@@ -264,6 +265,26 @@
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Confirm new password"
             />
+          </div>
+
+          <!-- Invalidate All Sessions -->
+          <div class="flex items-start pt-2">
+            <div class="flex items-center h-5">
+              <input
+                id="invalidateSessions"
+                v-model="passwordForm.invalidateAllSessions"
+                type="checkbox"
+                class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+            <div class="ml-3">
+              <label for="invalidateSessions" class="text-sm font-medium text-gray-700">
+                Logout from all devices
+              </label>
+              <p class="text-xs text-gray-500 mt-1">
+                This will sign you out from all other sessions and devices. You'll need to sign in again.
+              </p>
+            </div>
           </div>
 
           <!-- Error Message -->
@@ -306,6 +327,7 @@ import { ref, onMounted } from 'vue'
 import { userService } from '../services/userService'
 import DashboardLayout from '../components/DashboardLayout.vue'
 import ProfileImageUploader from '../components/ProfileImageUploader.vue'
+import PasswordStrengthIndicator from '../components/PasswordStrengthIndicator.vue'
 
 interface User {
   id: string
@@ -346,7 +368,8 @@ const showPasswordModal = ref(false)
 const passwordForm = ref({
   currentPassword: '',
   newPassword: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  invalidateAllSessions: false
 })
 const passwordError = ref('')
 const passwordSuccess = ref(false)
@@ -461,14 +484,17 @@ const changePassword = async () => {
 
     await userService.changePassword(
       passwordForm.value.currentPassword,
-      passwordForm.value.newPassword
+      passwordForm.value.newPassword,
+      passwordForm.value.confirmPassword,
+      passwordForm.value.invalidateAllSessions
     )
 
     passwordSuccess.value = true
     passwordForm.value = {
       currentPassword: '',
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      invalidateAllSessions: false
     }
 
     // Close modal after 2 seconds
@@ -477,7 +503,8 @@ const changePassword = async () => {
       passwordSuccess.value = false
     }, 2000)
   } catch (err: any) {
-    passwordError.value = err.response?.data?.message || 'Failed to change password'
+    // Handle nested error structure from password strength validation
+    passwordError.value = err.response?.data?.error?.message || err.response?.data?.message || 'Failed to change password'
     console.error('Password change error:', err)
   } finally {
     passwordSubmitting.value = false
@@ -489,7 +516,8 @@ const closePasswordModal = () => {
   passwordForm.value = {
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    invalidateAllSessions: false
   }
   passwordError.value = ''
   passwordSuccess.value = false

@@ -48,7 +48,15 @@ export const useAuthStore = defineStore('auth', () => {
       
       return true
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Login failed'
+      // Handle the error response structure from the API
+      // Error format: { success: false, error: { message: "..." } } or { message: "..." }
+      if (err.response?.data?.error?.message) {
+        error.value = err.response.data.error.message
+      } else if (err.response?.data?.message) {
+        error.value = err.response.data.message
+      } else {
+        error.value = 'Invalid credentials. Please check your email and password.'
+      }
       return false
     } finally {
       loading.value = false

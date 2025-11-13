@@ -93,6 +93,32 @@
           Media
         </router-link>
 
+        <!-- Users -->
+        <router-link
+          to="/users"
+          class="flex items-center px-4 py-3 rounded-lg transition"
+          :class="isActive('/users') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+          @click="sidebarOpen = false"
+        >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+          </svg>
+          Users
+        </router-link>
+
+        <!-- Sessions -->
+        <router-link
+          to="/sessions"
+          class="flex items-center px-4 py-3 rounded-lg transition"
+          :class="isActive('/sessions') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+          @click="sidebarOpen = false"
+        >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+          </svg>
+          Sessions
+        </router-link>
+
         <!-- Divider -->
         <div class="my-4 border-t border-gray-200" />
 

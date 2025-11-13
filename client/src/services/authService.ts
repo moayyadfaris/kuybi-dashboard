@@ -52,8 +52,12 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config
+    const loadingStore = useLoadingStore()
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't try to refresh token if this is a login request or if no refresh token exists
+    const isLoginRequest = originalRequest.url?.includes('/auth/login')
+    
+    if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
       if (isRefreshing) {
         // Queue the request if refresh is already in progress
         return new Promise((resolve, reject) => {
@@ -112,12 +116,10 @@ apiClient.interceptors.response.use(
         return Promise.reject(err)
       } finally {
         isRefreshing = false
-        const loadingStore = useLoadingStore()
         loadingStore.stopLoading()
       }
     }
 
-    const loadingStore = useLoadingStore()
     loadingStore.stopLoading()
     return Promise.reject(error)
   }
@@ -135,9 +137,10 @@ export const authService = {
   getProfile: () => apiClient.get('/v1/users/me'),
 
   updateProfile: (data: any) => apiClient.patch('/v1/users/profile', data),
-
-  changePassword: (oldPassword: string, newPassword: string) =>
-    apiClient.post('/v1/users/change-password', { oldPassword, newPassword }),
+  
+  // Check password strength
+  checkPasswordStrength: (password: string) =>
+    apiClient.post('/v1/auth/password-strength', { password }),
 }
 
 export default apiClient
