@@ -51,6 +51,16 @@ export const storyService = {
 
   // Remove story main image
   removeMainImage: (id: string) => apiClient.delete(`/v1/stories/${id}/main-image`),
+
+  // Get story versions
+  getStoryVersions: (id: string) => apiClient.get(`/v1/stories/${id}/versions`),
+
+  // Compare story versions
+  compareVersions: (id: string, versionA: number, versionB: number) =>
+    apiClient.post(`/v1/stories/${id}/versions/compare`, {
+      versionA,
+      versionB,
+    }),
 }
 
 export default storyService

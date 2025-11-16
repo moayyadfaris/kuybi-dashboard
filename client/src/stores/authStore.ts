@@ -75,10 +75,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const logout = () => {
-    user.value = null
-    setToken(null)
-    localStorage.removeItem('refresh_token')
+  const logout = async () => {
+    try {
+      const refreshTokenValue = localStorage.getItem('refresh_token')
+      if (refreshTokenValue) {
+        // Call logout API with refresh token
+        await authService.logout(refreshTokenValue)
+      }
+    } catch (err: any) {
+      console.error('Logout API error:', err)
+      // Continue with local logout even if API call fails
+    } finally {
+      // Clear local state and storage
+      user.value = null
+      setToken(null)
+      localStorage.removeItem('refresh_token')
+    }
   }
 
   const checkAuth = async () => {

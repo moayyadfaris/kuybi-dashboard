@@ -35,6 +35,49 @@
         <p class="text-green-800">{{ successMessage }}</p>
       </div>
 
+      <!-- Version Badge -->
+      <div v-if="form.title && currentVersion" class="mb-6 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a2 2 0 002 2h4a1 1 0 010 2h4a1 1 0 010-2h4a2 2 0 002-2V4a2 2 0 00-2-2H4zm3 7a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+              </svg>
+              <span class="font-semibold text-orange-900">Version {{ currentVersion.versionNumber }}</span>
+              <span :class="getVersionTypeBadgeClass(currentVersion.versionType)" class="px-2 py-1 text-xs font-semibold rounded">
+                {{ currentVersion.versionType }}
+              </span>
+              <span v-if="currentVersion.versionLabel" class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
+                {{ currentVersion.versionLabel }}
+              </span>
+            </div>
+            <div class="text-sm text-orange-700">
+              Last updated {{ formatRelativeTime(currentVersion.createdAt) }}
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              @click="navigateToVersionHistory"
+              class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-orange-300 text-orange-700 hover:bg-orange-50 rounded-lg text-sm font-medium transition"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              View History
+            </button>
+            <button
+              @click="showCreateVersionDialog = true"
+              class="inline-flex items-center gap-2 px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Create Snapshot
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Preview/Edit Toggle -->
       <div v-if="form.title" class="mb-6 flex gap-4">
         <button
@@ -319,13 +362,16 @@
           </div>
         </div>
       </div>
-
-      <!-- Version History Section -->
-      <div v-if="form.title && storyId" class="mt-8">
-        <VersionHistory :story-id="Number(storyId)" />
-      </div>
     </div>
   </div>
+
+  <!-- Create Version Dialog -->
+  <CreateVersionDialog
+    v-if="showCreateVersionDialog"
+    :story-id="Number(storyId)"
+    @close="showCreateVersionDialog = false"
+    @created="onVersionCreated"
+  />
   </DashboardLayout>
 </template>
 
@@ -335,10 +381,12 @@ import { useRouter, useRoute } from 'vue-router'
 import { storyService } from '../services/storyService'
 import { categoryService } from '../services/categoryService'
 import { tagService } from '../services/tagService'
+import { useVersionStore } from '../stores/versionStore'
 import { resolveAttachmentUrl } from '../utils/attachment'
 import DashboardLayout from '../components/DashboardLayout.vue'
-import VersionHistory from '../components/versions/VersionHistory.vue'
+import CreateVersionDialog from '../components/versions/CreateVersionDialog.vue'
 import StoryImageManager from '../components/StoryImageManager.vue'
+import type { Version } from '../types/version'
 
 interface Category {
   id: string
@@ -362,6 +410,7 @@ interface FormData {
 
 const router = useRouter()
 const route = useRoute()
+const versionStore = useVersionStore()
 
 const form = ref<FormData>({
   title: '',
@@ -384,6 +433,10 @@ const storyId = ref<string>('')
 const currentImage = ref<any>(null)
 const currentImageUrl = ref<string>('')
 const imageError = ref<string | null>(null)
+
+// Version-related state
+const currentVersion = ref<Version | null>(null)
+const showCreateVersionDialog = ref(false)
 
 const getCategoryName = (categoryId: string) => {
   const category = categories.value.find(c => c.id === categoryId)
@@ -537,10 +590,53 @@ const handleImageError = (message: string | null) => {
   imageError.value = message
 }
 
+// Version-related methods
+const loadCurrentVersion = async () => {
+  if (!storyId.value) return
+  
+  await versionStore.fetchVersionHistory(Number(storyId.value), { limit: 1 })
+  if (versionStore.versions.length > 0) {
+    currentVersion.value = versionStore.versions[0]
+  }
+}
+
+const navigateToVersionHistory = () => {
+  router.push(`/stories/${storyId.value}/versions`)
+}
+
+const getVersionTypeBadgeClass = (versionType: string) => {
+  const classes = {
+    AUTO: 'bg-gray-100 text-gray-800',
+    MANUAL: 'bg-green-100 text-green-800',
+    ROLLBACK: 'bg-orange-100 text-orange-800',
+    BRANCH: 'bg-purple-100 text-purple-800',
+    MERGE: 'bg-blue-100 text-blue-800'
+  }
+  return classes[versionType as keyof typeof classes] || 'bg-gray-100 text-gray-800'
+}
+
+const formatRelativeTime = (dateString: string) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) return 'just now'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`
+  return date.toLocaleDateString()
+}
+
+const onVersionCreated = () => {
+  showCreateVersionDialog.value = false
+  loadCurrentVersion()
+}
+
 onMounted(() => {
   storyId.value = route.params.id as string
   if (storyId.value) {
     fetchStory(storyId.value)
+    loadCurrentVersion()
   }
   fetchCategories()
   fetchTags()

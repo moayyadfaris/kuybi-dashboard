@@ -3,8 +3,10 @@ import { useAuthStore } from '../stores/authStore'
 import Login from '../pages/Login.vue'
 import Dashboard from '../pages/Dashboard.vue'
 import Stories from '../pages/Stories.vue'
+import StoryDetail from '../pages/StoryDetail.vue'
 import CreateStory from '../pages/CreateStory.vue'
 import EditStory from '../pages/EditStory.vue'
+import VersionHistoryPage from '../pages/VersionHistoryPage.vue'
 import Categories from '../pages/Categories.vue'
 import Tags from '../pages/Tags.vue'
 import Settings from '../pages/Settings.vue'
@@ -39,9 +41,21 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/stories/:id',
+    name: 'StoryDetail',
+    component: StoryDetail,
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/stories/:id/edit',
     name: 'EditStory',
     component: EditStory,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/stories/:id/versions',
+    name: 'VersionHistory',
+    component: VersionHistoryPage,
     meta: { requiresAuth: true },
   },
   {

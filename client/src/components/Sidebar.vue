@@ -230,8 +230,8 @@ const getInitials = (name?: string) => {
     .slice(0, 2)
 }
 
-const handleLogout = () => {
-  authStore.logout()
+const handleLogout = async () => {
+  await authStore.logout()
   router.push('/login')
 }
 </script>

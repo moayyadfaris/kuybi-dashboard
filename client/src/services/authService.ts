@@ -129,7 +129,8 @@ export const authService = {
   login: (email: string, password: string) =>
     apiClient.post('/v1/auth/login', { email, password }),
 
-  logout: () => apiClient.post('/v1/auth/logout'),
+  logout: (refreshToken: string) =>
+    apiClient.post('/v1/auth/logout', { refreshToken }),
 
   refreshToken: (refreshToken: string) =>
     apiClient.post('/v1/auth/refresh', { refreshToken }),

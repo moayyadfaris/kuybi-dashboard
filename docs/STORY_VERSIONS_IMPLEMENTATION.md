@@ -254,6 +254,79 @@ No additional configuration needed! The components work out-of-the-box with your
 
 ---
 
+## 🔄 Current Restructuring (Following Comprehensive Guide)
+
+### Date: 2024
+**Goal**: Restructure story versions to follow comprehensive Git-like implementation guide with proper Phase 1 MVP features.
+
+### What's Being Changed:
+
+1. **Version History Page** (`/stories/:id/versions`)
+   - Creating dedicated full-page timeline view
+   - Proper ASCII-layout-based UI matching guide specifications
+   - Enhanced branch filtering and pagination
+   - Git-style visual timeline with version badges
+
+2. **Version Badge on Edit Screen**
+   - Adding quick version info banner at top of EditStory page
+   - "View History" button → navigates to `/stories/:id/versions`
+   - "Create Snapshot" button → opens manual version creation modal
+   - Shows current version number, type, and last update
+
+3. **Enhanced Comparison Modal**
+   - Improved side-by-side diff view
+   - Better change visualization
+   - Rollback option directly from comparison
+
+4. **Rollback Confirmation**
+   - Preview of changes before rollback
+   - Safety confirmations
+   - Optional branch creation to preserve current state
+
+### Progress:
+- ✅ Types, services, store already implemented
+- ✅ Basic VersionHistory component exists
+- ✅ Dialogs (Create, Rollback, Tag) already created
+- ✅ Created dedicated VersionHistoryPage with full timeline view
+- ✅ Added version badge to EditStory page
+- ✅ Updated router with /stories/:id/versions route
+- ✅ Enhanced ComparisonModal with side-by-side diff
+- ✅ Enhanced RollbackDialog with change preview
+- 📋 Ready for testing Phase 1 MVP features
+
+### Phase 1 MVP Complete Features:
+1. **Version History Timeline** (`/stories/:id/versions`)
+   - Git-style visual timeline with colored version nodes
+   - Version type badges (AUTO, MANUAL, ROLLBACK, BRANCH, MERGE)
+   - Branch filtering and navigation
+   - Pinned versions and tags display
+   - Actions menu per version (View, Compare, Rollback, Tag)
+   - Sticky comparison bar when 2 versions selected
+   - Relative timestamps ("2 hours ago")
+   
+2. **Version Badge on Edit Screen**
+   - Shows current version number and type
+   - Quick access buttons: "View History" and "Create Snapshot"
+   - Displays last update time
+   - Gradient orange design matching theme
+
+3. **Enhanced Comparison Modal**
+   - Side-by-side diff view
+   - Added/Modified/Removed fields sections
+   - Color-coded changes (green=added, red=removed, yellow=modified)
+   - Shows change count and field names
+   - Direct rollback option from comparison
+
+4. **Enhanced Rollback Confirmation**
+   - Change preview with detailed diff
+   - Toggle to show/hide full comparison
+   - Mandatory commit message field
+   - Optional branch creation (recommended)
+   - Warning indicators
+   - Loading states for comparison
+
+---
+
 ## 🎨 Styling
 
 All components use your existing design system:
