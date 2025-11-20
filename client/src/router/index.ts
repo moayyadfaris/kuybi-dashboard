@@ -14,6 +14,11 @@ import Profile from '../pages/Profile.vue'
 import Media from '../pages/Media.vue'
 import Users from '../pages/Users.vue'
 import Sessions from '../pages/Sessions.vue'
+import PostTypes from '../pages/PostTypes.vue'
+import FieldBuilder from '../pages/FieldBuilder.vue'
+import PostContent from '../pages/PostContent.vue'
+import CreateContent from '../pages/CreateContent.vue'
+import EditContent from '../pages/EditContent.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -98,6 +103,36 @@ const routes: RouteRecordRaw[] = [
     path: '/sessions',
     name: 'Sessions',
     component: Sessions,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/post-types',
+    name: 'PostTypes',
+    component: PostTypes,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/post-types/:slug/fields',
+    name: 'FieldBuilder',
+    component: FieldBuilder,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/post-types/:slug/content',
+    name: 'PostContent',
+    component: PostContent,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/post-types/:slug/content/create',
+    name: 'CreateContent',
+    component: CreateContent,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/post-types/:slug/content/:id/edit',
+    name: 'EditContent',
+    component: EditContent,
     meta: { requiresAuth: true },
   },
   {

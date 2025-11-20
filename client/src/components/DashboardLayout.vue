@@ -93,6 +93,19 @@
           Media
         </router-link>
 
+        <!-- Post Types -->
+        <router-link
+          to="/post-types"
+          class="flex items-center px-4 py-3 rounded-lg transition"
+          :class="isActive('/post-types') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+          @click="sidebarOpen = false"
+        >
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+          </svg>
+          Post Types
+        </router-link>
+
         <!-- Users -->
         <router-link
           to="/users"
@@ -178,6 +191,23 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Mobile Top Bar -->
+      <div class="md:hidden h-16 bg-white shadow-md flex items-center justify-between px-4">
+        <button
+          @click="sidebarOpen = true"
+          class="text-gray-600 hover:text-orange-600 transition"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🍥</span>
+          <span class="font-bold text-gray-900">Kuybi</span>
+        </div>
+        <div class="w-6"></div> <!-- Spacer for centering -->
+      </div>
+
       <!-- Page Content -->
       <div class="flex-1 overflow-auto">
         <slot />
