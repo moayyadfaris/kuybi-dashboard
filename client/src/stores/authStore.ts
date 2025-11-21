@@ -2,11 +2,20 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authService } from '../services/authService'
 
+interface Role {
+  id: number
+  name: string
+  displayName: string
+  priority: number
+}
+
 interface User {
   id: string
   email: string
   name: string
-  role: string
+  role?: string // Legacy field
+  roleInfo?: Role
+  additionalRoles?: Role[]
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -44,6 +53,17 @@ export const useAuthStore = defineStore('auth', () => {
       // Set user data from login response
       if (userData) {
         user.value = userData
+        
+        // Load user permissions after successful login
+        const { useAclStore } = await import('./aclStore')
+        const aclStore = useAclStore()
+        if (userData.id) {
+          try {
+            await aclStore.loadUserPermissions(userData.id)
+          } catch (err) {
+            console.error('Failed to load user permissions:', err)
+          }
+        }
       }
       
       return true
@@ -90,12 +110,33 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       setToken(null)
       localStorage.removeItem('refresh_token')
+      
+      // Clear ACL permissions cache
+      const { useAclStore } = await import('./aclStore')
+      const aclStore = useAclStore()
+      aclStore.clearPermissionsCache()
     }
   }
 
   const checkAuth = async () => {
     if (token.value && !user.value) {
       await fetchUserProfile()
+    }
+    
+    // Load cached permissions on app init
+    if (token.value) {
+      const { useAclStore } = await import('./aclStore')
+      const aclStore = useAclStore()
+      aclStore.loadCachedPermissions()
+      
+      // Refresh permissions if user is loaded
+      if (user.value?.id) {
+        try {
+          await aclStore.loadUserPermissions(user.value.id)
+        } catch (err) {
+          console.error('Failed to refresh user permissions:', err)
+        }
+      }
     }
   }
 

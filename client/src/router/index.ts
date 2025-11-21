@@ -19,6 +19,8 @@ import FieldBuilder from '../pages/FieldBuilder.vue'
 import PostContent from '../pages/PostContent.vue'
 import CreateContent from '../pages/CreateContent.vue'
 import EditContent from '../pages/EditContent.vue'
+import Roles from '../pages/Roles.vue'
+import Permissions from '../pages/Permissions.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -133,6 +135,18 @@ const routes: RouteRecordRaw[] = [
     path: '/post-types/:slug/content/:id/edit',
     name: 'EditContent',
     component: EditContent,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/acl/roles',
+    name: 'Roles',
+    component: Roles,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/acl/permissions',
+    name: 'Permissions',
+    component: Permissions,
     meta: { requiresAuth: true },
   },
   {

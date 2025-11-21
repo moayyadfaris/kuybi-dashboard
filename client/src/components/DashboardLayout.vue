@@ -132,6 +132,42 @@
           Sessions
         </router-link>
 
+        <!-- ACL Section (Admin+) -->
+        <template v-if="canViewACL">
+          <!-- Divider -->
+          <div class="my-4 border-t border-gray-200" />
+          
+          <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Access Control
+          </div>
+
+          <!-- Roles -->
+          <router-link
+            to="/acl/roles"
+            class="flex items-center px-4 py-3 rounded-lg transition"
+            :class="isActive('/acl/roles') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+            @click="sidebarOpen = false"
+          >
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+            </svg>
+            Roles
+          </router-link>
+
+          <!-- Permissions -->
+          <router-link
+            to="/acl/permissions"
+            class="flex items-center px-4 py-3 rounded-lg transition"
+            :class="isActive('/acl/permissions') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+            @click="sidebarOpen = false"
+          >
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+            Permissions
+          </router-link>
+        </template>
+
         <!-- Divider -->
         <div class="my-4 border-t border-gray-200" />
 
@@ -217,15 +253,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useRouter } from 'vue-router'
+import { usePermissions } from '../composables/usePermissions'
+import { useAclStore } from '../stores/aclStore'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const aclStore = useAclStore()
+const { can, hasMinLevel } = usePermissions()
 const sidebarOpen = ref(false)
+
+// Load cached permissions on mount
+onMounted(() => {
+  aclStore.loadCachedPermissions()
+})
+
+const canViewACL = computed(() => {
+  // Show ACL menu for Admin priority (90) and above
+  // Check from user's roleInfo directly (available immediately after login)
+  const userPriority = authStore.user?.roleInfo?.priority ?? 0
+  return userPriority >= 90
+})
 
 const isActive = (path: string) => {
   if (path === '/') {
