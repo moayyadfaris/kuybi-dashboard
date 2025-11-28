@@ -44,16 +44,19 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await authService.login(email, password)
       // Handle the API response structure: { success, data: { accessToken, refreshToken, user } }
       const { accessToken, refreshToken, user: userData } = response.data.data
-      
+
       setToken(accessToken)
       if (refreshToken) {
         localStorage.setItem('refresh_token', refreshToken)
       }
-      
+
       // Set user data from login response
       if (userData) {
         user.value = userData
-        
+
+        // Fetch full user profile to ensure we have roleInfo
+        await fetchUserProfile()
+
         // Load user permissions after successful login
         const { useAclStore } = await import('./aclStore')
         const aclStore = useAclStore()
@@ -65,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
           }
         }
       }
-      
+
       return true
     } catch (err: any) {
       // Handle the error response structure from the API
@@ -110,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       setToken(null)
       localStorage.removeItem('refresh_token')
-      
+
       // Clear ACL permissions cache
       const { useAclStore } = await import('./aclStore')
       const aclStore = useAclStore()
@@ -122,13 +125,13 @@ export const useAuthStore = defineStore('auth', () => {
     if (token.value && !user.value) {
       await fetchUserProfile()
     }
-    
+
     // Load cached permissions on app init
     if (token.value) {
       const { useAclStore } = await import('./aclStore')
       const aclStore = useAclStore()
       aclStore.loadCachedPermissions()
-      
+
       // Refresh permissions if user is loaded
       if (user.value?.id) {
         try {

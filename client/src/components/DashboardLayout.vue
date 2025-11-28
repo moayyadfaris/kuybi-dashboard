@@ -166,6 +166,19 @@
             </svg>
             Permissions
           </router-link>
+
+          <!-- System Status -->
+          <router-link
+            to="/system-status"
+            class="flex items-center px-4 py-3 rounded-lg transition"
+            :class="isActive('/system-status') ? 'bg-orange-100 text-orange-700 font-medium shadow-sm' : 'text-gray-700 hover:bg-orange-50'"
+            @click="sidebarOpen = false"
+          >
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+            </svg>
+            System Status
+          </router-link>
         </template>
 
         <!-- Divider -->

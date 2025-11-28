@@ -1,152 +1,138 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
-import Login from '../pages/Login.vue'
-import Dashboard from '../pages/Dashboard.vue'
-import Stories from '../pages/Stories.vue'
-import StoryDetail from '../pages/StoryDetail.vue'
-import CreateStory from '../pages/CreateStory.vue'
-import EditStory from '../pages/EditStory.vue'
-import VersionHistoryPage from '../pages/VersionHistoryPage.vue'
-import Categories from '../pages/Categories.vue'
-import Tags from '../pages/Tags.vue'
-import Settings from '../pages/Settings.vue'
-import Profile from '../pages/Profile.vue'
-import Media from '../pages/Media.vue'
-import Users from '../pages/Users.vue'
-import Sessions from '../pages/Sessions.vue'
-import PostTypes from '../pages/PostTypes.vue'
-import FieldBuilder from '../pages/FieldBuilder.vue'
-import PostContent from '../pages/PostContent.vue'
-import CreateContent from '../pages/CreateContent.vue'
-import EditContent from '../pages/EditContent.vue'
-import Roles from '../pages/Roles.vue'
-import Permissions from '../pages/Permissions.vue'
+
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: () => import('../pages/Login.vue'),
     meta: { requiresAuth: false },
   },
   {
     path: '/',
     name: 'Dashboard',
-    component: Dashboard,
+    component: () => import('../pages/Dashboard.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/stories',
     name: 'Stories',
-    component: Stories,
+    component: () => import('../pages/Stories.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/stories/create',
     name: 'CreateStory',
-    component: CreateStory,
+    component: () => import('../pages/CreateStory.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/stories/:id',
     name: 'StoryDetail',
-    component: StoryDetail,
+    component: () => import('../pages/StoryDetail.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/stories/:id/edit',
     name: 'EditStory',
-    component: EditStory,
+    component: () => import('../pages/EditStory.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/stories/:id/versions',
     name: 'VersionHistory',
-    component: VersionHistoryPage,
+    component: () => import('../pages/VersionHistoryPage.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/categories',
     name: 'Categories',
-    component: Categories,
+    component: () => import('../pages/Categories.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/tags',
     name: 'Tags',
-    component: Tags,
+    component: () => import('../pages/Tags.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/settings',
     name: 'Settings',
-    component: Settings,
+    component: () => import('../pages/Settings.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile,
+    component: () => import('../pages/Profile.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/media',
     name: 'Media',
-    component: Media,
+    component: () => import('../pages/Media.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/users',
     name: 'Users',
-    component: Users,
+    component: () => import('../pages/Users.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/sessions',
     name: 'Sessions',
-    component: Sessions,
+    component: () => import('../pages/Sessions.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/post-types',
     name: 'PostTypes',
-    component: PostTypes,
+    component: () => import('../pages/PostTypes.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/post-types/:slug/fields',
     name: 'FieldBuilder',
-    component: FieldBuilder,
+    component: () => import('../pages/FieldBuilder.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/post-types/:slug/content',
     name: 'PostContent',
-    component: PostContent,
+    component: () => import('../pages/PostContent.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/post-types/:slug/content/create',
     name: 'CreateContent',
-    component: CreateContent,
+    component: () => import('../pages/CreateContent.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/post-types/:slug/content/:id/edit',
     name: 'EditContent',
-    component: EditContent,
+    component: () => import('../pages/EditContent.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/acl/roles',
     name: 'Roles',
-    component: Roles,
+    component: () => import('../pages/Roles.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/acl/permissions',
     name: 'Permissions',
-    component: Permissions,
+    component: () => import('../pages/Permissions.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/system-status',
+    name: 'SystemStatus',
+    component: () => import('../pages/SystemStatus.vue'),
     meta: { requiresAuth: true },
   },
   {

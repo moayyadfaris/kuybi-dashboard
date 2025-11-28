@@ -73,13 +73,6 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ postType?.name }} Fields</h2>
         
         <div v-for="field in fields" :key="field.id" class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">
-            {{ field.label }}
-            <span v-if="field.isRequired" class="text-red-500">*</span>
-          </label>
-          
-          <p v-if="field.helpText" class="text-xs text-gray-500">{{ field.helpText }}</p>
-          
           <!-- Dynamic Field Component -->
           <DynamicField
             :field="field"
